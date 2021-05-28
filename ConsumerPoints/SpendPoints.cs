@@ -7,9 +7,9 @@ namespace ConsumerPoints
 {
     public static class SpendPoints
     {
-        public static AllocatePoints(int pointCount)
+        public static int AllocatePoints(int pointCount)
         {
-
+            return 0;
         }
     }
 }
