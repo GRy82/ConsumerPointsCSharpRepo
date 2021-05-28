@@ -1,4 +1,5 @@
 using ConsumerPoints.Data;
+using ConsumerPoints.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -37,6 +38,8 @@ namespace ConsumerPoints
                     .AllowAnyMethod()
                     .AllowAnyHeader());
             });
+
+            services.AddScoped<ITransactionStorage, LocalMemOperations>();
 
             //services.AddDbContext<ApplicationContext>(options =>
             //    options.UseSqlServer(
