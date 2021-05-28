@@ -25,31 +25,31 @@ namespace ConsumerPoints.Controllers
 
         public PointsController(ITransactionStorage transactionStorage)
         {
-            
+            _transactionStorage = transactionStorage;
         }
 
         [HttpPost]
-        public IActionResult AddTransactions([FromBody] Transaction transaction)
+        public IActionResult AddTransactions([FromBody] List<Transaction> transactions)
         {
+            _transactionStorage.AddTransactions(transactions);
 
-
-            return Ok(transaction);
+            return Ok(transactions);
         }
 
         [HttpGet]
         public IActionResult GetPayerBalances()
         {
+            var payerBalances = _transactionStorage.GetPayerBalances();
 
-
-            return Ok(new object {
-                
-            });
+            return Ok(payerBalances);
         }
 
         [HttpPut]
         public IActionResult SpendPoints(int pointsToBeSpent)
         {
+            var expendituresByPayer = _transactionStorage.SpendPoints(pointsToBeSpent);
 
+            return Ok(expendituresByPayer);
         }
 
         [HttpGet]
