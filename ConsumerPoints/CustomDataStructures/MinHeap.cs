@@ -75,14 +75,14 @@ namespace ConsumerPoints.CustomDataStructures
             BubbleUp(transaction, childToCompareIndex);
         }
 
-        private bool IsFull()
+        public bool IsFull()
         {
             if (count == capacity) return true;
 
             return false;
         }
 
-        private bool IsEmpty()
+        public bool IsEmpty()
         {
             if (count == 0) return true;
 
