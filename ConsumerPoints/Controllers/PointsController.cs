@@ -49,7 +49,7 @@ namespace ConsumerPoints.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(LocalMemOperations.transactions);
+            return Ok();
         }
     }
 }

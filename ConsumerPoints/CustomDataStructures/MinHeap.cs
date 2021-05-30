@@ -10,9 +10,15 @@ namespace ConsumerPoints.CustomDataStructures
     public class MinHeap
     {
 
-        private int capacity = 10;
-        public int count = 0;
+        public int Capacity { get; set; }
+        public int Count { get; set; }
         public Transaction[] transactions = new Transaction[10];
+
+        public MinHeap()
+        {
+            Capacity = 10;
+            Count = 0;
+        }
 
 
         public List<Transaction> ToList()
@@ -25,7 +31,7 @@ namespace ConsumerPoints.CustomDataStructures
 
             if (IsFull()) Resize();
 
-            int addedindex = count++;
+            int addedindex = Count++;
             transactions[addedindex] = transaction;
        
             BubbleUp(transaction, addedindex);
@@ -36,7 +42,7 @@ namespace ConsumerPoints.CustomDataStructures
             if (IsEmpty()) throw new Exception("Heap is Empty. There is no transaction to remove.");
 
             Transaction removal = transactions[0];
-            transactions[0] = transactions[count - 1];
+            transactions[0] = transactions[--Count];
             BubbleDown(transactions[0], 0);
 
             return removal;
@@ -47,7 +53,7 @@ namespace ConsumerPoints.CustomDataStructures
             int parentIndex = transactionIndex % 2 == 0 ? 
                 transactionIndex / 2 - 1 : transactionIndex / 2;
 
-            if (transactionIndex == 0 || transaction.Timestamp.CompareTo(transactions[parentIndex]) > 0) 
+            if (transactionIndex == 0 || transaction.Timestamp.CompareTo(transactions[parentIndex].Timestamp) > 0) 
                 return;
 
             transactions[transactionIndex] = transactions[parentIndex];
@@ -68,7 +74,7 @@ namespace ConsumerPoints.CustomDataStructures
                 childToCompareIndex = transactions[leftChildIndex].Timestamp.CompareTo(transactions[rightChildIndex].Timestamp) > 0 ?
                     rightChildIndex : leftChildIndex;
 
-            if (transaction.Timestamp.CompareTo(transactions[childToCompareIndex]) < 0)
+            if (transaction.Timestamp.CompareTo(transactions[childToCompareIndex].Timestamp) < 0)
                 return;
 
             transactions[parentIndex] = transactions[childToCompareIndex];
@@ -78,35 +84,35 @@ namespace ConsumerPoints.CustomDataStructures
 
         public bool IsFull()
         {
-            if (count == capacity) return true;
+            if (Count == Capacity) return true;
 
             return false;
         }
 
         public bool IsEmpty()
         {
-            if (count == 0) return true;
+            if (Count == 0) return true;
 
             return false;
         }
 
         private void Resize()
         {
-            capacity *= 2;
+            Capacity *= 2;
             Transaction[] temp = transactions;
-            transactions = new Transaction[capacity];
+            transactions = new Transaction[Capacity];
             for (int i = 0; i < temp.Length; i++)
                 transactions[i] = temp[i];
         }
 
         private bool HasLeftChild(int index)
         {
-            return index * 2 + 1 < count;
+            return index * 2 + 1 < Count;
         }
 
         private bool HasRightChild(int index)
         {
-            return index * 2 + 2 < count;
+            return index * 2 + 2 < Count;
         }
     }
 }

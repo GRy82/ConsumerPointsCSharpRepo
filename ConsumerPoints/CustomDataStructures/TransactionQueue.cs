@@ -33,7 +33,7 @@ namespace ConsumerPoints.CustomDataStructures
 
         public IEnumerator GetEnumerator()
         {
-            for (int i = 0; i < minHeap.count; i++)
+            for (int i = 0; i < minHeap.Count; i++)
             {
                 yield return minHeap.transactions[i];
             }
