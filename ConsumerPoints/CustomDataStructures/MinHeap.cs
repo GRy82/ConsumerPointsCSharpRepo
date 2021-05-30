@@ -14,8 +14,14 @@ namespace ConsumerPoints.CustomDataStructures
         private Transaction[] transactions = new Transaction[10];
 
 
-        public void Insert(Transaction transaction)
+        public List<Transaction> ToList()
         {
+            return transactions.ToList();
+        }
+
+        public void Insert(Transaction transaction)
+        { 
+
             if (IsFull()) Resize();
 
             int addedindex = count++;
