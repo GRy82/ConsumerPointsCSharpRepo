@@ -12,18 +12,9 @@ namespace ConsumerPoints.Test
     public class MinHeapTests
     {
         [TestMethod]
-        public void Insert_WhenEmpty_ToZeroIndex()
+        public void Test()
         {
-            //Arrange
-            MinHeap minHeap = new MinHeap();
-            minHeap.Insert(new Transaction
-            {
-                Payer="CVS Pharmacy",
-                Points=400,
-                Timestamp=DateTime.Now()
-            });
-            //Act
-            //Assert
+
         }
     }
 }

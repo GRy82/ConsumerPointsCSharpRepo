@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,8 +11,8 @@ namespace ConsumerPoints.CustomDataStructures
     {
 
         private int capacity = 10;
-        private int count = 0;
-        private Transaction[] transactions = new Transaction[10];
+        public int count = 0;
+        public Transaction[] transactions = new Transaction[10];
 
 
         public List<Transaction> ToList()
