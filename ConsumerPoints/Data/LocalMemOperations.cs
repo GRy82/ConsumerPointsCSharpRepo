@@ -12,17 +12,22 @@ namespace ConsumerPoints.Data
     {
 
         public TransactionQueue storedTransactions = new TransactionQueue();
+        List<Transaction> transactions = new List<Transaction>();
 
         public List<PayerBalance> GetPayerBalances()
         {
-            Dictionary<string, int> pointBalanceByPayer = new Dictionary<string, int>();
-            //foreach (var transaction in storedTransactions)
-            //{
-               
-            //}
+            Dictionary<string, PayerBalance> pointBalanceByPayer = new Dictionary<string, PayerBalance>();
+            foreach (var transaction in storedTransactions.ToList())
+            {
+                if (pointBalanceByPayer.ContainsKey(transaction.Payer))
+                    pointBalanceByPayer[transaction.Payer].Points += transaction.Points;
+                else
+                    pointBalanceByPayer.Add(transaction.Payer, new PayerBalance {
+                        Payer=transaction.Payer, Points=transaction.Points
+                    });
+            }
 
-
-            return new List<PayerBalance>();
+            return pointBalanceByPayer.Values.ToList();
         }
 
         public void AddTransactions(List<Transaction> transactions)

@@ -30,7 +30,7 @@ namespace ConsumerPoints.Controllers
             return Ok(transactions);
         }
 
-
+        [HttpGet]
         public IActionResult GetPayerBalances()
         {
             var payerBalances = _transactionStorage.GetPayerBalances();
@@ -44,12 +44,6 @@ namespace ConsumerPoints.Controllers
             var expendituresByPayer = _transactionStorage.SpendPoints(pointsToBeSpent);
 
             return Ok(expendituresByPayer);
-        }
-
-        [HttpGet]
-        public IActionResult Get()
-        {
-            return Ok();
         }
     }
 }

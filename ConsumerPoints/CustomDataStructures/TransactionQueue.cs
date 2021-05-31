@@ -33,9 +33,11 @@ namespace ConsumerPoints.CustomDataStructures
 
         public IEnumerator GetEnumerator()
         {
-            for (int i = 0; i < minHeap.Count; i++)
+            int count = minHeap.Count;
+            var transactions = minHeap.GetTransactions();
+            for (int i = 0; i < count; i++)
             {
-                yield return minHeap.transactions[i];
+                yield return transactions[i];            
             }
         }
     }

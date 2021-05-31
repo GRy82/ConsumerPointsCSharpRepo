@@ -23,7 +23,11 @@ namespace ConsumerPoints.CustomDataStructures
 
         public List<Transaction> ToList()
         {
-            return transactions.ToList();
+            var copiedArray = new Transaction[Count];
+            for (int i = 0; i < copiedArray.Length; i++)
+                copiedArray[i] = transactions[i];
+
+            return copiedArray.ToList();
         }
 
         public void Insert(Transaction transaction)
@@ -113,6 +117,11 @@ namespace ConsumerPoints.CustomDataStructures
         private bool HasRightChild(int index)
         {
             return index * 2 + 2 < Count;
+        }
+
+        public Transaction[] GetTransactions()
+        {
+            return transactions;
         }
     }
 }
