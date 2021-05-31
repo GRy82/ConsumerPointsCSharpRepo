@@ -39,9 +39,9 @@ namespace ConsumerPoints.Controllers
         }
 
         [HttpPut]
-        public IActionResult SpendPoints(int pointsToBeSpent)
+        public IActionResult SpendPoints(int withdrawal)
         {
-            var expendituresByPayer = _transactionStorage.SpendPoints(pointsToBeSpent);
+            var expendituresByPayer = _transactionStorage.SpendPoints(withdrawal);
 
             return Ok(expendituresByPayer);
         }

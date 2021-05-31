@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ConsumerPoints.Models
 {
-    public class PayerBalance
+    public class PayerPoints
     {
         public string Payer { get; set; }
         public int Points { get; set; }

@@ -26,6 +26,12 @@ namespace ConsumerPoints.CustomDataStructures
             return minHeap.IsEmpty();
         }
 
+        public Transaction Peek()
+        {
+            var transactions = minHeap.GetTransactions();
+            return transactions[0];
+        }
+
         public List<Transaction> ToList()
         {
             return minHeap.ToList();

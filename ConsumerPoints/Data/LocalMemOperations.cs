@@ -14,18 +14,11 @@ namespace ConsumerPoints.Data
         public TransactionQueue storedTransactions = new TransactionQueue();
         List<Transaction> transactions = new List<Transaction>();
 
-        public List<PayerBalance> GetPayerBalances()
+        public List<PayerPoints> GetPayerBalances()
         {
-            Dictionary<string, PayerBalance> pointBalanceByPayer = new Dictionary<string, PayerBalance>();
+            Dictionary<string, PayerPoints> pointBalanceByPayer = new Dictionary<string, PayerPoints>();
             foreach (var transaction in storedTransactions.ToList())
-            {
-                if (pointBalanceByPayer.ContainsKey(transaction.Payer))
-                    pointBalanceByPayer[transaction.Payer].Points += transaction.Points;
-                else
-                    pointBalanceByPayer.Add(transaction.Payer, new PayerBalance {
-                        Payer=transaction.Payer, Points=transaction.Points
-                    });
-            }
+                InsertToDictionary(pointBalanceByPayer, transaction.Payer, transaction.Points);
 
             return pointBalanceByPayer.Values.ToList();
         }
@@ -36,9 +29,58 @@ namespace ConsumerPoints.Data
                 storedTransactions.Enqueue(transaction);
         }
 
-        public List<ExpenditureByPayer> SpendPoints(int pointsToBeSpent)
+        public List<PayerPoints> SpendPoints(int withdrawal)
         {
-            return new List<ExpenditureByPayer>();
+            int totalPoints = GetTotalPoints();
+            if (withdrawal > totalPoints) return new List<PayerPoints>(); ;
+
+            Dictionary<string, PayerPoints> pointsSpentByPayer = new Dictionary<string, PayerPoints>();
+            
+            do
+            {
+                Transaction oldestTransaction;
+                oldestTransaction = storedTransactions.Dequeue();
+
+                if (TransactionConsumed(withdrawal, oldestTransaction))
+                {
+                    InsertToDictionary(pointsSpentByPayer, oldestTransaction.Payer, oldestTransaction.Points * -1);
+                    withdrawal -= oldestTransaction.Points;
+                }
+                else
+                {
+                    oldestTransaction.Points -= withdrawal;
+                    storedTransactions.Enqueue(oldestTransaction);
+                    InsertToDictionary(pointsSpentByPayer, oldestTransaction.Payer, withdrawal * -1);
+                    withdrawal = 0;
+                }
+            } while (withdrawal > 0);
+
+            return pointsSpentByPayer.Values.ToList();
         }
+
+        public int GetTotalPoints()
+        {
+            return GetPayerBalances().Aggregate(0,
+                (current, next) => 
+                    current += next.Points);
+        }
+
+        private bool TransactionConsumed(int pointsNeeded, Transaction transaction)
+        {
+            return pointsNeeded > transaction.Points;
+        }
+
+        private void InsertToDictionary(Dictionary<string, PayerPoints> payerPoints, string Payer, int Points)
+        {
+            if (payerPoints.ContainsKey(Payer))
+                payerPoints[Payer].Points += Points;
+            else
+                payerPoints.Add(Payer, new PayerPoints
+                {
+                    Payer = Payer,
+                    Points = Points
+                });
+        }
+        
     }
 }

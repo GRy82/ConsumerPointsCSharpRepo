@@ -8,11 +8,11 @@ namespace ConsumerPoints.Interfaces
 {
     public interface ITransactionStorage
     {
-        public List<PayerBalance> GetPayerBalances();
+        public List<PayerPoints> GetPayerBalances();
 
         public void AddTransactions(List<Transaction> transactions);
 
-        public List<ExpenditureByPayer> SpendPoints(int pointToBeSpent);
+        public List<PayerPoints> SpendPoints(int pointToBeSpent);
         
     }
 }
