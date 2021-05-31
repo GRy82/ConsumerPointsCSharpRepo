@@ -32,7 +32,7 @@ namespace ConsumerPoints.Data
         public List<PayerPoints> SpendPoints(int withdrawal)
         {
             int totalPoints = GetTotalPoints();
-            if (withdrawal > totalPoints) return new List<PayerPoints>(); ;
+            if (withdrawal > totalPoints || withdrawal == 0) return new List<PayerPoints>(); ;
 
             Dictionary<string, PayerPoints> pointsSpentByPayer = new Dictionary<string, PayerPoints>();
             
