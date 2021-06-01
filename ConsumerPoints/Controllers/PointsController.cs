@@ -27,17 +27,16 @@ namespace ConsumerPoints.Controllers
         [HttpPost]
         public IActionResult AddTransaction([FromBody] Transaction transaction)
         {
-            _transactionStorage.AddTransaction(transaction);
-
-            return Ok(transaction);
+            try
+            {
+                _transactionStorage.AddTransaction(transaction);
+                return Ok(transaction);
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
-
-        //public IActionResult GetTransactions()
-        //{
-        //    var thing = _transactionStorage.GetTransactions();
-
-        //    return Ok(thing);
-        //}
 
         [HttpGet]
         public IActionResult GetPayerBalances()
