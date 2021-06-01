@@ -33,20 +33,20 @@ namespace ConsumerPoints.Data
                     new Transaction{
                         Payer = "CVS Pharmacy",
                         Points = 200,
-                        Timestamp = new DateTime(2021, 01, 30)
+                        Timestamp = new DateTime(2021, 02, 04)
 
                     });
 
-            //modelBuilder.Entity<PayerPoints>()
-            //    .HasData(
-            //        new PayerPoints
-            //        {
-            //            Payer = "CVS Pharmacy",
-            //            Points = 600
-            //        });
+            modelBuilder.Entity<PayerPoints>()
+                .HasData(
+                    new PayerPoints
+                    {
+                        Payer = "cvs pharmacy",
+                        Points = 600
+                    });
         }
 
-        //public DbSet<PayerPoints> PayerPoints { get; set; }
+        public DbSet<PayerPoints> PayerPoints { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
     }
 }

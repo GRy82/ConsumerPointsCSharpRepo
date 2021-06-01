@@ -19,18 +19,28 @@ namespace ConsumerPoints.ServerLogic
 
         public string GetPayerBalances()
         {
-            Dictionary<string, int> balancesByPayer = new Dictionary<string, int>();
-            var transactions = _context.Transactions.Select(c => new PayerPoints { Payer=c.Payer, Points=c.Points });
-            foreach (var transaction in transactions)
-                ServerHelper.InsertToDictionary(balancesByPayer, transaction.Payer, transaction.Points);
-
-            return JsonConvert.SerializeObject(balancesByPayer);
+            return JsonConvert.SerializeObject(_context.PayerPoints
+                .Select(c => c)
+                .OrderByDescending(c => c.Points));
         }
 
 
         public void AddTransaction(Transaction transaction)
         {
             _context.Add(transaction);
+            var payer = _context.PayerPoints.Find(transaction.Payer);
+            if (payer == null) _context.PayerPoints.Add(
+                 new PayerPoints
+                 {
+                     Payer=transaction.Payer,
+                     Points=transaction.Points
+                 });
+            else
+            {
+                payer.Points += transaction.Points;
+                _context.PayerPoints.Update(payer);
+            }
+
             _context.SaveChanges();
         }
 
@@ -43,22 +53,15 @@ namespace ConsumerPoints.ServerLogic
 
             Dictionary<string, PayerPoints> pointsSpentByPayer = new Dictionary<string, PayerPoints>();
 
+            var oldestTransactions = _context.Transactions
+                .Select(c => c).Where(c => c.Points > 0)
+                .OrderBy(c => c.Timestamp).ToList();
             do
             {
-                var oldestTransaction = _context.Transactions.Select(c => c).OrderBy(c => c.Timestamp).First();
-                if (ServerHelper.TransactionConsumed(withdrawal, oldestTransaction))
-                {
-                    ServerHelper.InsertToDictionary(pointsSpentByPayer, oldestTransaction.Payer, oldestTransaction.Points * -1);
-                    withdrawal -= oldestTransaction.Points;
-                    _context.Transactions.Remove(oldestTransaction);
-                }
-                else
-                {
-                    oldestTransaction.Points -= withdrawal;
-                    ServerHelper.InsertToDictionary(pointsSpentByPayer, oldestTransaction.Payer, withdrawal * -1);
-                    withdrawal = 0;
-                    _context.Update(oldestTransaction);
-                }
+          
+
+                if (withdrawal > )
+                
                 _context.SaveChanges();
             }
             while (withdrawal > 0);
@@ -69,7 +72,7 @@ namespace ConsumerPoints.ServerLogic
 
         private int GetTotalPoints()
         {
-            var pointValues = (IEnumerable<int>)_context.Transactions.Select(c => c.Points);
+            var pointValues = (IEnumerable<int>)_context.PayerPoints.Select(c => c.Points);
             var pointsTotal = pointValues.Aggregate(0,
                 (current, next) =>
                     current + next);
