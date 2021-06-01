@@ -6,6 +6,7 @@ using ConsumerPoints.CustomDataStructures;
 using ConsumerPoints.Interfaces;
 using ConsumerPoints.Models;
 using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 
 namespace ConsumerPoints.ServerLogic
 {
@@ -32,13 +33,13 @@ namespace ConsumerPoints.ServerLogic
         //    return thing;
         //}
 
-        public List<PayerPoints> GetPayerBalances()
+        public string GetPayerBalances()
         {
-            Dictionary<string, PayerPoints> pointBalanceByPayer = new Dictionary<string, PayerPoints>();
+            Dictionary<string, int> pointBalanceByPayer = new Dictionary<string, int>();
             foreach (var transaction in storedTransactions.ToList())
                 ServerHelper.InsertToDictionary(pointBalanceByPayer, transaction.Payer, transaction.Points);
 
-            return pointBalanceByPayer.Values.ToList();
+            return JsonConvert.SerializeObject(pointBalanceByPayer);
         }
 
 
@@ -81,7 +82,8 @@ namespace ConsumerPoints.ServerLogic
 
         private int GetTotalPoints()
         {
-            return GetPayerBalances().Aggregate(0,
+            var payerPoints = JsonConvert.DeserializeObject<List<PayerPoints>>(GetPayerBalances());
+            return payerPoints.Aggregate(0,
                 (current, next) => 
                     current + next.Points);
         }

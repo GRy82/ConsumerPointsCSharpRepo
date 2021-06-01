@@ -24,5 +24,13 @@ namespace ConsumerPoints.ServerLogic
                     Points = Points
                 });
         }
+
+        public static void InsertToDictionary(Dictionary<string, int> payerPoints, string payer, int points)
+        {
+            if (payerPoints.ContainsKey(payer))
+                payerPoints[payer] += points;
+            else
+                payerPoints.Add(payer, points);
+        }
     }
 }

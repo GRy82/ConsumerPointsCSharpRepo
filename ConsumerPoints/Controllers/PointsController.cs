@@ -42,24 +42,24 @@ namespace ConsumerPoints.Controllers
         [HttpGet]
         public IActionResult GetPayerBalances()
         {
-            List<PayerPoints> payerBalances = _transactionStorage.GetPayerBalances();
+            var payerBalances = _transactionStorage.GetPayerBalances();
 
             return Ok(payerBalances);
         }
 
         
         [HttpPut]
-        public IActionResult SpendPoints(int withdrawal)
+        public IActionResult SpendPoints([FromBody] Expenditure spendRequest)
         {
             List<PayerPoints> expendituresByPayer;
 
             try
             {
-                expendituresByPayer = _transactionStorage.SpendPoints(withdrawal);
+                expendituresByPayer = _transactionStorage.SpendPoints(spendRequest.Points);
             }
             catch(Exception e)
             {
-                return BadRequest(e);
+                return BadRequest(e.Message);
             }
             
             return Ok(expendituresByPayer);

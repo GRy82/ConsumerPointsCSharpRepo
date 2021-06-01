@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ConsumerPoints.ServerLogic
 {
@@ -16,14 +17,14 @@ namespace ConsumerPoints.ServerLogic
             _context = context;
         }
 
-        public List<PayerPoints> GetPayerBalances()
+        public string GetPayerBalances()
         {
-            Dictionary<string, PayerPoints> balancesByPayer = new Dictionary<string, PayerPoints>();
+            Dictionary<string, int> balancesByPayer = new Dictionary<string, int>();
             var transactions = _context.Transactions.Select(c => new PayerPoints { Payer=c.Payer, Points=c.Points });
             foreach (var transaction in transactions)
                 ServerHelper.InsertToDictionary(balancesByPayer, transaction.Payer, transaction.Points);
 
-            return balancesByPayer.Values.ToList();
+            return JsonConvert.SerializeObject(balancesByPayer);
         }
 
 
@@ -44,7 +45,7 @@ namespace ConsumerPoints.ServerLogic
 
             do
             {
-                var oldestTransaction = _context.Transactions.Select(c => c).Min();
+                var oldestTransaction = _context.Transactions.Select(c => c).OrderBy(c => c.Timestamp).First();
                 if (ServerHelper.TransactionConsumed(withdrawal, oldestTransaction))
                 {
                     ServerHelper.InsertToDictionary(pointsSpentByPayer, oldestTransaction.Payer, oldestTransaction.Points * -1);
@@ -60,7 +61,7 @@ namespace ConsumerPoints.ServerLogic
                 }
                 _context.SaveChanges();
             }
-            while (withdrawal < 0);
+            while (withdrawal > 0);
 
             return pointsSpentByPayer.Values.ToList();
         }
