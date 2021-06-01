@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using ConsumerPoints.Data;
 using ConsumerPoints.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using ConsumerPoints.Interfaces;
+
 
 namespace ConsumerPoints.Controllers
 {
@@ -15,7 +17,7 @@ namespace ConsumerPoints.Controllers
     [Route("api/[controller]")]
     public class PointsController : ControllerBase
     {
-        private ITransactionStorage _transactionStorage;
+        ITransactionStorage _transactionStorage;
 
         public PointsController(ITransactionStorage transactionStorage)
         {
@@ -30,10 +32,17 @@ namespace ConsumerPoints.Controllers
             return Ok(transaction);
         }
 
+        //public IActionResult GetTransactions()
+        //{
+        //    var thing = _transactionStorage.GetTransactions();
+
+        //    return Ok(thing);
+        //}
+
         [HttpGet]
         public IActionResult GetPayerBalances()
         {
-            var payerBalances = _transactionStorage.GetPayerBalances();
+            List<PayerPoints> payerBalances = _transactionStorage.GetPayerBalances();
 
             return Ok(payerBalances);
         }

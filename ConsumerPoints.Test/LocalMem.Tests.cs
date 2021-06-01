@@ -10,7 +10,7 @@ using ConsumerPoints.Data;
 namespace ConsumerPoints.Test
 {
     [TestClass]
-    public class MinHeapTests
+    public class LocalMemTests
     {
         [TestMethod]
         public void GetPayerBalance_HappyPath_ReturnList()

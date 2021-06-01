@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ConsumerPoints.CustomDataStructures;
 using ConsumerPoints.Interfaces;
 using ConsumerPoints.Models;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace ConsumerPoints.Data
 {
@@ -12,7 +13,17 @@ namespace ConsumerPoints.Data
     {
 
         public TransactionQueue storedTransactions = new TransactionQueue();
-        List<Transaction> transactions = new List<Transaction>();
+
+        //public List<Transaction> GetTransactions()
+        //{
+        //    var thing = new List<Transaction>();
+        //    while (!storedTransactions.IsEmpty())
+        //    {
+        //        thing.Add(storedTransactions.Dequeue());
+        //    }
+
+        //    return thing;
+        //}
 
         public List<PayerPoints> GetPayerBalances()
         {
@@ -25,14 +36,13 @@ namespace ConsumerPoints.Data
 
         public void AddTransaction(Transaction transaction)
         {
-            //foreach (var transaction in transactions)
-                storedTransactions.Enqueue(transaction);
+            storedTransactions.Enqueue(transaction);
         }
 
         public List<PayerPoints> SpendPoints(int withdrawal)
         {
             int totalPoints = GetTotalPoints();
-            if (withdrawal > totalPoints || withdrawal == 0) return new List<PayerPoints>(); ;
+            if (withdrawal > totalPoints || withdrawal == 0) return new List<PayerPoints>(); 
 
             Dictionary<string, PayerPoints> pointsSpentByPayer = new Dictionary<string, PayerPoints>();
             

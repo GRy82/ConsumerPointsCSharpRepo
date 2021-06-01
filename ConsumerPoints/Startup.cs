@@ -39,11 +39,11 @@ namespace ConsumerPoints
                     .AllowAnyHeader());
             });
 
-            services.AddScoped<ITransactionStorage, LocalMemOperations>();
+            services.AddScoped<ITransactionStorage, DbOperations>();
 
-            //services.AddDbContext<ApplicationContext>(options =>
-            //    options.UseSqlServer(
-            //        Configuration.GetConnectionString("sqlConnection")));
+            services.AddDbContext<ApplicationContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("sqlConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

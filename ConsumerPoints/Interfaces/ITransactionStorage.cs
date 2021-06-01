@@ -8,6 +8,7 @@ namespace ConsumerPoints.Interfaces
 {
     public interface ITransactionStorage
     {
+        //public List<Transaction> GetTransactions();
         public List<PayerPoints> GetPayerBalances();
 
         public void AddTransaction(Transaction transaction);
