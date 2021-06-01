@@ -14,6 +14,13 @@ namespace ConsumerPoints.Data
 
         public TransactionQueue storedTransactions = new TransactionQueue();
 
+        //public LocalMemOperations()
+        //{
+        //    AddTransaction(new Transaction { Payer = "Ding", Points = 300, Timestamp = new DateTime(2021, 03, 04) });
+        //    AddTransaction(new Transaction { Payer = "Dong", Points = 700, Timestamp = new DateTime(2021, 03, 06) });
+        //    AddTransaction(new Transaction { Payer = "Dong", Points = 400, Timestamp = new DateTime(2021, 03, 07) });
+        //}
+
         //public List<Transaction> GetTransactions()
         //{
         //    var thing = new List<Transaction>();
@@ -42,7 +49,8 @@ namespace ConsumerPoints.Data
         public List<PayerPoints> SpendPoints(int withdrawal)
         {
             int totalPoints = GetTotalPoints();
-            if (withdrawal > totalPoints || withdrawal == 0) return new List<PayerPoints>(); 
+            if (withdrawal == 0) return new List<PayerPoints>();
+            if (withdrawal > totalPoints) throw new Exception("You do not have the funds for that purchase.");
 
             Dictionary<string, PayerPoints> pointsSpentByPayer = new Dictionary<string, PayerPoints>();
             
@@ -72,7 +80,7 @@ namespace ConsumerPoints.Data
         {
             return GetPayerBalances().Aggregate(0,
                 (current, next) => 
-                    current += next.Points);
+                    current + next.Points);
         }
 
         private bool TransactionConsumed(int pointsNeeded, Transaction transaction)

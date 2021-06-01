@@ -13,8 +13,10 @@ namespace ConsumerPoints.Test
     public class DbTests
     {
         [TestMethod]
-        public void Add_Transaction()
+        public void GetTotalPoints_fifteenHundredPoints()
         {
+           
+            
         }
     }
 

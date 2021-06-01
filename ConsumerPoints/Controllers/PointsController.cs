@@ -39,7 +39,7 @@ namespace ConsumerPoints.Controllers
         //    return Ok(thing);
         //}
 
-        [HttpGet]
+       
         public IActionResult GetPayerBalances()
         {
             List<PayerPoints> payerBalances = _transactionStorage.GetPayerBalances();
@@ -47,12 +47,26 @@ namespace ConsumerPoints.Controllers
             return Ok(payerBalances);
         }
 
+        [HttpGet]
+        public IActionResult GetTotalPoints()
+        {
+            return Ok(_transactionStorage.GetTotalPoints());
+        }
 
         [HttpPut]
         public IActionResult SpendPoints(int withdrawal)
         {
-            var expendituresByPayer = _transactionStorage.SpendPoints(withdrawal);
+            List<PayerPoints> expendituresByPayer;
 
+            try
+            {
+                expendituresByPayer = _transactionStorage.SpendPoints(withdrawal);
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e);
+            }
+            
             return Ok(expendituresByPayer);
         }
     }
