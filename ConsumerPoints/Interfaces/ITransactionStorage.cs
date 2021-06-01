@@ -10,7 +10,7 @@ namespace ConsumerPoints.Interfaces
     {
         public List<PayerPoints> GetPayerBalances();
 
-        public void AddTransactions(List<Transaction> transactions);
+        public void AddTransaction(Transaction transaction);
 
         public List<PayerPoints> SpendPoints(int pointToBeSpent);
         

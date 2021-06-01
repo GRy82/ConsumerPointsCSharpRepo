@@ -13,40 +13,12 @@ namespace ConsumerPoints.Test
     public class MinHeapTests
     {
         [TestMethod]
-        public void Test()
-        {
-            List<Transaction> transactions = new List<Transaction> {
-                new Transaction{
-                    Payer="CVS Pharmacy",
-                    Points=400,
-                    Timestamp=new DateTime(2021, 03, 04)
-                },
-                new Transaction{
-                    Payer="Wegman's",
-                    Points=300,
-                    Timestamp=new DateTime(2021, 05, 04)
-                }
-            };
-
-            LocalMemOperations localMemOperations = new LocalMemOperations();
-            localMemOperations.AddTransactions(transactions);
-            var firstDequeue = localMemOperations.storedTransactions.Dequeue();
-
-            Assert.AreEqual(firstDequeue, transactions[0]);
-            Assert.AreEqual(firstDequeue.Payer, transactions[0].Payer);
-            Assert.AreEqual(localMemOperations.storedTransactions.Dequeue(), transactions[1]);
-            Assert.IsTrue(localMemOperations.storedTransactions.IsEmpty());
-        }
-
-        [TestMethod]
         public void GetPayerBalance_HappyPath_ReturnList()
         {
-            List<Transaction> transactions = ArrangeTransactions();
-
-            LocalMemOperations localMemOperations = new LocalMemOperations();
-            localMemOperations.AddTransactions(transactions);
+            LocalMemOperations localMemOperations = ArrangeTransactions();
             int totalPoints = localMemOperations.GetTotalPoints();
             var payerBalances = localMemOperations.GetPayerBalances();
+
             Assert.AreEqual(totalPoints, 1000);
             Assert.AreEqual(localMemOperations.storedTransactions.ToList().Count, 3);
             Assert.AreEqual(payerBalances[0].Points, 700);
@@ -59,10 +31,7 @@ namespace ConsumerPoints.Test
         [TestMethod]
         public void SpendPoints_ConsumeOneTransaction_TransactionRemoved()
         {
-            List<Transaction> transactions = ArrangeTransactions();
-
-            LocalMemOperations localMemOperations = new LocalMemOperations();
-            localMemOperations.AddTransactions(transactions);
+            LocalMemOperations localMemOperations = ArrangeTransactions();
             List<PayerPoints> expenditure = localMemOperations.SpendPoints(400);
             List<PayerPoints> balances = localMemOperations.GetPayerBalances();
 
@@ -77,10 +46,7 @@ namespace ConsumerPoints.Test
         [TestMethod]
         public void SpendPoints_ConsumeTwoTransactions_TransactionsRemoved()
         {
-            List<Transaction> transactions = ArrangeTransactions();
-
-            LocalMemOperations localMemOperations = new LocalMemOperations();
-            localMemOperations.AddTransactions(transactions);
+            LocalMemOperations localMemOperations = ArrangeTransactions();
             var expenditure = localMemOperations.SpendPoints(700);
             var balances = localMemOperations.GetPayerBalances();
 
@@ -98,10 +64,7 @@ namespace ConsumerPoints.Test
         [TestMethod]
         public void SpendPoints_HalfConsumedTransaction_PayerPointsDeducted()
         {
-            List<Transaction> transactions = ArrangeTransactions();
-
-            LocalMemOperations localMemOperations = new LocalMemOperations();
-            localMemOperations.AddTransactions(transactions);
+            LocalMemOperations localMemOperations = ArrangeTransactions();
             var expenditure = localMemOperations.SpendPoints(500);
             var balances = localMemOperations.GetPayerBalances();
 
@@ -116,25 +79,30 @@ namespace ConsumerPoints.Test
 
         }
 
-        public List<Transaction> ArrangeTransactions()
+        public LocalMemOperations ArrangeTransactions()
         {
-            return new List<Transaction> {
-                new Transaction{
-                    Payer="CVS Pharmacy",
-                    Points=400,
-                    Timestamp=new DateTime(2021, 02, 04)
-                },
-                new Transaction{
-                    Payer="Wegman's",
-                    Points=300,
-                    Timestamp=new DateTime(2021, 03, 04)
-                },
-                new Transaction{
-                    Payer="CVS Pharmacy",
-                    Points=300,
-                    Timestamp=new DateTime(2021, 04, 04)
-                }
+            var T1 = new Transaction {
+                Payer="CVS Pharmacy",
+                Points=400,
+                Timestamp=new DateTime(2021, 02, 04)
             };
+            var T2 = new Transaction {
+                Payer = "Wegman's",
+                Points = 300,
+                Timestamp = new DateTime(2021, 03, 04)
+            };
+            var T3 = new Transaction {
+                Payer = "CVS Pharmacy",
+                Points = 300,
+                Timestamp = new DateTime(2021, 04, 04)
+            };
+
+            LocalMemOperations localMemOperations = new LocalMemOperations();
+            localMemOperations.AddTransaction(T1);
+            localMemOperations.AddTransaction(T2);
+            localMemOperations.AddTransaction(T3);
+
+            return localMemOperations;
         }
     }
 }

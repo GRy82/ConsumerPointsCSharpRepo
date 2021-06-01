@@ -23,9 +23,9 @@ namespace ConsumerPoints.Data
             return pointBalanceByPayer.Values.ToList();
         }
 
-        public void AddTransactions(List<Transaction> transactions)
+        public void AddTransaction(Transaction transaction)
         {
-            foreach (var transaction in transactions)
+            //foreach (var transaction in transactions)
                 storedTransactions.Enqueue(transaction);
         }
 

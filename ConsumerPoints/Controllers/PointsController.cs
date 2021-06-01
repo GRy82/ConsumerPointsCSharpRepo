@@ -23,11 +23,11 @@ namespace ConsumerPoints.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddTransactions([FromBody] List<Transaction> transactions)
+        public IActionResult AddTransaction([FromBody] Transaction transaction)
         {
-            _transactionStorage.AddTransactions(transactions);
+            _transactionStorage.AddTransaction(transaction);
 
-            return Ok(transactions);
+            return Ok(transaction);
         }
 
         [HttpGet]
@@ -37,6 +37,7 @@ namespace ConsumerPoints.Controllers
 
             return Ok(payerBalances);
         }
+
 
         [HttpPut]
         public IActionResult SpendPoints(int withdrawal)
