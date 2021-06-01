@@ -1,4 +1,5 @@
 using ConsumerPoints.Data;
+using ConsumerPoints.ServerLogic;
 using ConsumerPoints.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

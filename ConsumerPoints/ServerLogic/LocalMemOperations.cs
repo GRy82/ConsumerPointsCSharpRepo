@@ -7,7 +7,7 @@ using ConsumerPoints.Interfaces;
 using ConsumerPoints.Models;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace ConsumerPoints.Data
+namespace ConsumerPoints.ServerLogic
 {
     public class LocalMemOperations : ITransactionStorage
     {
@@ -36,15 +36,17 @@ namespace ConsumerPoints.Data
         {
             Dictionary<string, PayerPoints> pointBalanceByPayer = new Dictionary<string, PayerPoints>();
             foreach (var transaction in storedTransactions.ToList())
-                InsertToDictionary(pointBalanceByPayer, transaction.Payer, transaction.Points);
+                ServerHelper.InsertToDictionary(pointBalanceByPayer, transaction.Payer, transaction.Points);
 
             return pointBalanceByPayer.Values.ToList();
         }
+
 
         public void AddTransaction(Transaction transaction)
         {
             storedTransactions.Enqueue(transaction);
         }
+
 
         public List<PayerPoints> SpendPoints(int withdrawal)
         {
@@ -59,16 +61,16 @@ namespace ConsumerPoints.Data
                 Transaction oldestTransaction;
                 oldestTransaction = storedTransactions.Dequeue();
 
-                if (TransactionConsumed(withdrawal, oldestTransaction))
+                if (ServerHelper.TransactionConsumed(withdrawal, oldestTransaction))
                 {
-                    InsertToDictionary(pointsSpentByPayer, oldestTransaction.Payer, oldestTransaction.Points * -1);
+                    ServerHelper.InsertToDictionary(pointsSpentByPayer, oldestTransaction.Payer, oldestTransaction.Points * -1);
                     withdrawal -= oldestTransaction.Points;
                 }
                 else
                 {
                     oldestTransaction.Points -= withdrawal;
                     storedTransactions.Enqueue(oldestTransaction);
-                    InsertToDictionary(pointsSpentByPayer, oldestTransaction.Payer, withdrawal * -1);
+                    ServerHelper.InsertToDictionary(pointsSpentByPayer, oldestTransaction.Payer, withdrawal * -1);
                     withdrawal = 0;
                 }
             } while (withdrawal > 0);
@@ -76,29 +78,12 @@ namespace ConsumerPoints.Data
             return pointsSpentByPayer.Values.ToList();
         }
 
-        public int GetTotalPoints()
+
+        private int GetTotalPoints()
         {
             return GetPayerBalances().Aggregate(0,
                 (current, next) => 
                     current + next.Points);
         }
-
-        private bool TransactionConsumed(int pointsNeeded, Transaction transaction)
-        {
-            return pointsNeeded > transaction.Points;
-        }
-
-        private void InsertToDictionary(Dictionary<string, PayerPoints> payerPoints, string Payer, int Points)
-        {
-            if (payerPoints.ContainsKey(Payer))
-                payerPoints[Payer].Points += Points;
-            else
-                payerPoints.Add(Payer, new PayerPoints
-                {
-                    Payer = Payer,
-                    Points = Points
-                });
-        }
-        
     }
 }
