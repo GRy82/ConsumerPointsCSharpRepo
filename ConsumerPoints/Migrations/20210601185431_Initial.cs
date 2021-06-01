@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ConsumerPoints.Migrations
 {
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,6 +20,21 @@ namespace ConsumerPoints.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SpendingMarkers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LastSpentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastWasPartiallySpent = table.Column<bool>(type: "bit", nullable: false),
+                    Remainder = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpendingMarkers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Transactions",
                 columns: table => new
                 {
@@ -33,25 +48,18 @@ namespace ConsumerPoints.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "PayerPoints",
-                columns: new[] { "Payer", "Points" },
-                values: new object[] { "cvs pharmacy", 600 });
-
-            migrationBuilder.InsertData(
-                table: "Transactions",
-                columns: new[] { "Timestamp", "Payer", "Points" },
-                values: new object[] { new DateTime(2021, 1, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "CVS Pharmacy", 400 });
-
-            migrationBuilder.InsertData(
-                table: "Transactions",
-                columns: new[] { "Timestamp", "Payer", "Points" },
-                values: new object[] { new DateTime(2021, 2, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), "CVS Pharmacy", 200 });
+                table: "SpendingMarkers",
+                columns: new[] { "Id", "LastSpentDate", "LastWasPartiallySpent", "Remainder" },
+                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 0 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "PayerPoints");
+
+            migrationBuilder.DropTable(
+                name: "SpendingMarkers");
 
             migrationBuilder.DropTable(
                 name: "Transactions");

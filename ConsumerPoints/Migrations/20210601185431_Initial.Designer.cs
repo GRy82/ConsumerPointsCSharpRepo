@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConsumerPoints.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20210601172410_Init")]
-    partial class Init
+    [Migration("20210601185431_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,12 +32,35 @@ namespace ConsumerPoints.Migrations
                     b.HasKey("Payer");
 
                     b.ToTable("PayerPoints");
+                });
+
+            modelBuilder.Entity("ConsumerPoints.Models.SpendingMarker", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("LastSpentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("LastWasPartiallySpent")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Remainder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SpendingMarkers");
 
                     b.HasData(
                         new
                         {
-                            Payer = "cvs pharmacy",
-                            Points = 600
+                            Id = 1,
+                            LastSpentDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastWasPartiallySpent = false,
+                            Remainder = 0
                         });
                 });
 
@@ -55,20 +78,6 @@ namespace ConsumerPoints.Migrations
                     b.HasKey("Timestamp");
 
                     b.ToTable("Transactions");
-
-                    b.HasData(
-                        new
-                        {
-                            Timestamp = new DateTime(2021, 1, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Payer = "CVS Pharmacy",
-                            Points = 400
-                        },
-                        new
-                        {
-                            Timestamp = new DateTime(2021, 2, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Payer = "CVS Pharmacy",
-                            Points = 200
-                        });
                 });
 #pragma warning restore 612, 618
         }
