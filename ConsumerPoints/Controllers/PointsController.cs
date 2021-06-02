@@ -32,9 +32,9 @@ namespace ConsumerPoints.Controllers
                 _transactionStorage.AddTransaction(transaction);
                 return Ok(transaction);
             }
-            catch
+            catch(Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.Message);
             }
         }
 

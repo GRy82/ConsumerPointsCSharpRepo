@@ -31,8 +31,12 @@ namespace ConsumerPoints.ServerLogic
 
         public void AddTransaction(Transaction transaction)
         {
-            _context.Add(transaction);
             var payer = _context.PayerPoints.Find(transaction.Payer);
+            if(!ValidTransactionPoints(payer, transaction)) 
+                throw new Exception("Payer balances cannot be negative.");
+
+            _context.Transactions.Add(transaction);
+
             if (payer == null) _context.PayerPoints.Add(
                  new PayerPoints
                  {
@@ -140,6 +144,15 @@ namespace ConsumerPoints.ServerLogic
                     current + next);
 
             return pointsTotal;
+        }
+
+        private bool ValidTransactionPoints(PayerPoints payer, Transaction transaction)
+        {
+            if (payer != null && payer.Points + transaction.Points < 0
+                || payer == null && transaction.Points < 0)
+                return false;
+
+            return true;
         }
     }
 }
