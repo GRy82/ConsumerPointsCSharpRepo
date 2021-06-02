@@ -8,11 +8,35 @@ ConsumerPoints is a backend web service handling the transactions of a consumer 
 ## Operation Procedures
 This web service is operated by interacting with a database. During the development of this web service, it was tested and implemented with a locally-hosted database, using Microsoft SQL Server within Visual Studio 2019 Community. So it is recommended that this be the method for storing persistent data when using this web service. 
 
-In order to generate a new database with tables to store data for this web service, you will need to run the command, "update-database" in the terminal of visual studio. It will use files already present within the project to structure the database. 
+### Getting Started
+First, what you will need to do is create a folder where you want to store the source code of this web service. Then you can 'clone' the project into that location, and open it from there. All of this can be done from a command-line interface or "terminal" with the commands that we will go over below.
 
-To interact with the web service with actions such as adding transactions and spending points, the endpoints of this web service must be accessed.  This can be done with a separate front end application that exposes the functionality of the web service. This of course requires a software developer. For those not of the skillset, or those looking to use the service for short-term duration, using an endpoint testing software will be more simplistic, and is much quicker to get up-and-running. I recommend using the software, Postman, for these purposes.  The directions that follow are written with the assumption that you are using Postman, or a comparable software tool.  
+- Go to the location where you want to store the project by 'changing directory' to that location.
+  example:
+ > cd /documents/projects
+
+- Create a new folder, naming it appropriately, by making a directory.
+  example:
+ > mkdir ConsumerPoints
+
+- Change directory once more to execute commands from inside that new folder/directory. The period after cd communicates to the computer that you're searching for the ConsumerPoints folder within the folder you are currently in. 
+  example:
+ > cd ./ConsumerPoints
+
+- From this repository's main page, you can copy the url, or click the 'clone' drop-down to copy it from there. This url will be used to acquire the repository.  
+
+- Back within the terminal, making sure you're still in the correct folder, execute the following command to clone the project.
+ 
+ > git clone https://github.com/GRy82/ConsumerPointsCSharpRepo
+
+- Voila! You should now have the project within the folder designated, whether you named the folder 'ConsumerPoints' or something else. You will need to install Visual Studio 2019 Community if you do not already have it. But once you do, just double click the .sln file or 'solution' to open the project. 
+
+### Setup Your Database
+In order to generate a new database with tables to store data for this web service, you will need to run the command, "update-database" in the terminal or 'Developer PowerShell' of visual studio. If you do not see this component of the user interface, go to the 'view' menu and click 'terminal'. Once you run the "update-database" command, it will use files already present within the project to structure the database.  
 
 ### The ConsumerPoints endpoint
+To interact with the web service with actions such as adding transactions and spending points, the endpoints of this web service must be accessed.  This can be done with a separate front end application that exposes the functionality of the web service. This of course requires a software developer. For those not of the skillset, or those looking to use the service for short-term duration, using an endpoint testing software will be more simplistic, and is much quicker to get up-and-running. I recommend using the software, Postman, for these purposes. The directions that follow are written with the assumption that you are using Postman, or a comparable software tool. A browser version of Postman can be found on the web for free, as well as an application that can be downloaded and installed.
+
 In Postman, in the text input field, you will provide the url for the endpoint.  If accessing a locally-hosted database, this url will start with https://localhost:[port-number]
 
 [port-number] will be substituted with the respective port you are using. 
