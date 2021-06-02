@@ -15,7 +15,6 @@ namespace ConsumerPoints.ServerLogic
 
         public TransactionQueue storedTransactions = new TransactionQueue();
 
-
         //public LocalMemOperations()
         //{
         //    AddTransaction( new Transaction
@@ -39,6 +38,7 @@ namespace ConsumerPoints.ServerLogic
       
         //}
 
+
         public string GetPayerBalances()
         {
             Dictionary<string, int> pointBalanceByPayer = new Dictionary<string, int>();
@@ -47,6 +47,7 @@ namespace ConsumerPoints.ServerLogic
 
             return JsonConvert.SerializeObject(pointBalanceByPayer);
         }
+
 
         public List<PayerPoints> GetPayerBalanceList()
         {
