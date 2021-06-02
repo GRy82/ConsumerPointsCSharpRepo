@@ -6,7 +6,9 @@ ConsumerPoints is a backend web service handling the transactions of a consumer 
 - No payer's balance is allowed to go into the negative for a given customer.
 
 ## Operation Procedures
-This web service is operated by interacting with a database. During the development of this web service, it was tested and implemented with a locally-hosted database, using Microsoft SQL Server. So it is recommended that this be the method for storing persistent data when using this web service. 
+This web service is operated by interacting with a database. During the development of this web service, it was tested and implemented with a locally-hosted database, using Microsoft SQL Server within Visual Studio 2019 Community. So it is recommended that this be the method for storing persistent data when using this web service. 
+
+In order to generate a new database with tables to store data for this web service, you will need to run the command, "update-database" in the terminal of visual studio. It will use files already present within the project to structure the database. 
 
 To interact with the web service with actions such as adding transactions and spending points, the endpoints of this web service must be accessed.  This can be done with a separate front end application that exposes the functionality of the web service. This of course requires a software developer. For those not of the skillset, or those looking to use the service for short-term duration, using an endpoint testing software will be more simplistic, and is much quicker to get up-and-running. I recommend using the software, Postman, for these purposes.  The directions that follow are written with the assumption that you are using Postman, or a comparable software tool.  
 
