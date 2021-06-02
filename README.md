@@ -27,7 +27,7 @@ To get a readout or list of payers and each corresponding balance, you will use 
 If there are no points present for this customer in the database, you will see empty curly brackets as a response, representing this absence("{}").
 
 ### Add Transaction
-To add a transaction, you must use a 'POST' request from the drop-down menu. To be successful, you will need to provide a textual body of your own in the larger text box. Directly above this large box, you must have the following options selected: 'Bosy', 'raw', and 'Json'(the latter two from drop-downs) See example below for what your text body should resemble:
+To add a transaction, you must use a 'POST' request from the drop-down menu. To be successful, you will need to provide a textual body of your own in the larger text box. Directly above this large box, you must have the following options selected: 'Body', 'raw', and 'Json'(the latter two from drop-downs) See example below for what your text body should resemble:
 
 {
   "Payer": "DANNON",
