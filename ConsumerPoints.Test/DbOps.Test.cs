@@ -6,17 +6,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using ConsumerPoints.Data;
+using Moq;
+using ConsumerPoints.Interfaces;
 
 namespace ConsumerPoints.Test
 {
     [TestClass]
-    public class DbTests
+    public class DbOpsTests
     {
         [TestMethod]
-        public void GetTotalPoints_fifteenHundredPoints()
+        public void GetPayerBalances_Test()
         {
-           
-            
+            Mock<PayerPoints> payerBalance = new Mock<PayerPoints>();
+            payerBalance.SetupGet(c => c.Payer).Returns("CVS PHARMACY");
+            payerBalance.SetupGet(c => c.Points).Returns(2000);
+
+
         }
     }
 

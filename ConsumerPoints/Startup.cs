@@ -40,7 +40,7 @@ namespace ConsumerPoints
                     .AllowAnyHeader());
             });
 
-            services.AddScoped<ITransactionStorage, DbOperations>();
+            services.AddScoped<ITransactionStorage, LocalMemOperations>();
 
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(

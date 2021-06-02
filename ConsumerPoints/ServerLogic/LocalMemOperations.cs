@@ -15,22 +15,28 @@ namespace ConsumerPoints.ServerLogic
 
         public TransactionQueue storedTransactions = new TransactionQueue();
 
+
         //public LocalMemOperations()
         //{
-        //    AddTransaction(new Transaction { Payer = "Ding", Points = 300, Timestamp = new DateTime(2021, 03, 04) });
-        //    AddTransaction(new Transaction { Payer = "Dong", Points = 700, Timestamp = new DateTime(2021, 03, 06) });
-        //    AddTransaction(new Transaction { Payer = "Dong", Points = 400, Timestamp = new DateTime(2021, 03, 07) });
-        //}
-
-        //public List<Transaction> GetTransactions()
-        //{
-        //    var thing = new List<Transaction>();
-        //    while (!storedTransactions.IsEmpty())
+        //    AddTransaction( new Transaction
         //    {
-        //        thing.Add(storedTransactions.Dequeue());
-        //    }
-
-        //    return thing;
+        //        Payer = "CVS Pharmacy",
+        //        Points = 400,
+        //        Timestamp = new DateTime(2021, 02, 04)
+        //    });
+        //    AddTransaction(new Transaction
+        //    {
+        //        Payer = "Wegman's",
+        //        Points = 300,
+        //        Timestamp = new DateTime(2021, 03, 04)
+        //    });
+        //    AddTransaction( new Transaction
+        //    {
+        //        Payer = "CVS Pharmacy",
+        //        Points = 300,
+        //        Timestamp = new DateTime(2021, 04, 04)
+        //    });
+      
         //}
 
         public string GetPayerBalances()
@@ -40,6 +46,15 @@ namespace ConsumerPoints.ServerLogic
                 ServerHelper.InsertToDictionary(pointBalanceByPayer, transaction.Payer, transaction.Points);
 
             return JsonConvert.SerializeObject(pointBalanceByPayer);
+        }
+
+        public List<PayerPoints> GetPayerBalanceList()
+        {
+            Dictionary<string, PayerPoints> pointBalanceByPayer = new Dictionary<string, PayerPoints>();
+            foreach (var transaction in storedTransactions.ToList())
+                ServerHelper.InsertToDictionary(pointBalanceByPayer, transaction.Payer, transaction.Points);
+
+            return pointBalanceByPayer.Values.ToList();
         }
 
 
@@ -82,10 +97,11 @@ namespace ConsumerPoints.ServerLogic
 
         private int GetTotalPoints()
         {
-            var payerPoints = JsonConvert.DeserializeObject<List<PayerPoints>>(GetPayerBalances());
-            return payerPoints.Aggregate(0,
+            var payerPoints = GetPayerBalanceList();
+            var totalPoints = payerPoints.Aggregate(0,
                 (current, next) => 
                     current + next.Points);
+            return totalPoints;
         }
     }
 }

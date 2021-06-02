@@ -63,7 +63,7 @@ namespace ConsumerPoints.ServerLogic
             {
                 oldestUnspentTransaction = GetOldestUnspentTrans(spendingMarker);
 
-                int deduction = UpdateValues(spendingMarker, oldestUnspentTransaction, withdrawal);
+                int deduction = GetDeduction(spendingMarker, oldestUnspentTransaction, withdrawal);
                 withdrawal -= deduction;
                 spendingMarker.LastWasPartiallySpent = true;
                 if (spendingMarker.Remainder == 0)
@@ -84,7 +84,7 @@ namespace ConsumerPoints.ServerLogic
         }
 
 
-        private int UpdateValues(SpendingMarker spendingMarker, Transaction oldestUnspentTransaction, int withdrawal)
+        private int GetDeduction(SpendingMarker spendingMarker, Transaction oldestUnspentTransaction, int withdrawal)
         {
             int deduction;
             if (spendingMarker.LastWasPartiallySpent)
