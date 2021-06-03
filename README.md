@@ -95,4 +95,6 @@ If registered as a service, the LocalMemOperations class is that responsible for
 
 This LocalMemOperations class was testable, and passing with unit tests, but did not feature truly persistent data. With each request made to the service, class fields would be re-initialized, and constructors would be re-called. The proposed solution for carrying this service out to full-functioning, would be with the use of a local cache. 
 
+06/03/2021 update: Local cache was not needed to achieve persistence of locally-stored data throughout the lifetime of the application. Service just needed to be registered as Singleton, as opposed to Transient or Scoped -- as it had been registered originally.  A memory cache is still intended to be implemented, but it would better serve the ITransactionStorage DbOperations service.
+
 
