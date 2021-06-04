@@ -60,79 +60,45 @@ namespace ConsumerPoints.ServerLogic
             if (withdrawal > totalPoints) throw new Exception("You do not have the points for that purchase.");
 
             Dictionary<string, PayerPoints> pointsSpentByPayer = new Dictionary<string, PayerPoints>();
-            var spendingMarker = _context.SpendingMarkers.Find(spendingMarkerId);
             Transaction oldestUnspentTransaction;
 
             while (withdrawal > 0)
             {
-                oldestUnspentTransaction = GetOldestUnspentTrans(spendingMarker);
-
-                int deduction = GetDeduction(spendingMarker, oldestUnspentTransaction, withdrawal);
+                oldestUnspentTransaction = GetOldestUnspentTrans();
+                int deduction = GetDeduction(oldestUnspentTransaction, withdrawal);
                 withdrawal -= deduction;
-                spendingMarker.LastWasPartiallySpent = true;
-                if (spendingMarker.Remainder == 0)
-                    spendingMarker.LastWasPartiallySpent = false;
+                oldestUnspentTransaction.UnspentPoints -= deduction;
   
                 ServerHelper.InsertToDictionary(pointsSpentByPayer, oldestUnspentTransaction.Payer, deduction * -1);
-                spendingMarker.LastSpentDate = oldestUnspentTransaction.Timestamp;
 
                 var payerBalance = _context.PayerPoints.Find(oldestUnspentTransaction.Payer);
                 payerBalance.Points -= deduction;
                 _context.PayerPoints.Update(payerBalance);
+                _context.Transactions.Update(oldestUnspentTransaction);
             }
 
-            _context.SpendingMarkers.Update(spendingMarker);
             _context.SaveChanges();
-
             return pointsSpentByPayer.Values.ToList();
         }
 
 
-        private int GetDeduction(SpendingMarker spendingMarker, Transaction oldestUnspentTransaction, int withdrawal)
+        private int GetDeduction(Transaction oldestUnspentTransaction, int withdrawal)
         {
-            int deduction;
-            if (spendingMarker.LastWasPartiallySpent)
-                deduction = PartiallySpentLastTransaction(spendingMarker, oldestUnspentTransaction, withdrawal);
-            else//last transaction was fully spent
-                deduction = FullySpentLastTransaction(spendingMarker, oldestUnspentTransaction, withdrawal);
+            int deduction = 0;
+            if (withdrawal > oldestUnspentTransaction.UnspentPoints)
+                deduction = oldestUnspentTransaction.UnspentPoints;
+            else
+                deduction = withdrawal;
 
             return deduction;
         }
 
 
-        private int PartiallySpentLastTransaction(SpendingMarker spendingMarker, Transaction oldestUnspentTransaction, int withdrawal)
+        private Transaction GetOldestUnspentTrans()
         {
-            if (withdrawal > spendingMarker.Remainder)
-            {
-                int deduction = withdrawal - spendingMarker.Remainder;
-                spendingMarker.Remainder = 0;
-                return deduction;
-            }
-            else
-            {
-                spendingMarker.Remainder -= withdrawal;
-                return withdrawal;
-            }
-        }
-
-
-        private int FullySpentLastTransaction(SpendingMarker spendingMarker, Transaction oldestUnspentTransaction, int withdrawal)
-        {
-            if (withdrawal > oldestUnspentTransaction.Points)
-               return oldestUnspentTransaction.Points;
-            else
-            {
-                spendingMarker.Remainder = oldestUnspentTransaction.Points - withdrawal;
-                return withdrawal; 
-            }
-        }
-
-
-        private Transaction GetOldestUnspentTrans(SpendingMarker spendingMarker)
-        {
-            return spendingMarker.LastWasPartiallySpent ?
-                    _context.Transactions.Select(c => c).Where(c => c.Timestamp >= spendingMarker.LastSpentDate).First() :
-                    _context.Transactions.Select(c => c).Where(c => c.Timestamp > spendingMarker.LastSpentDate).First();
+            return _context.Transactions.Select(c => c)
+                                        .Where(c => c.UnspentPoints > 0)
+                                        .OrderBy(c => c.Timestamp).First();
         }
 
 
