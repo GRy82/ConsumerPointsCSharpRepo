@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConsumerPoints.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20210601185431_Initial")]
+    [Migration("20210604212746_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -73,6 +73,9 @@ namespace ConsumerPoints.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Points")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PointsSpent")
                         .HasColumnType("int");
 
                     b.HasKey("Timestamp");

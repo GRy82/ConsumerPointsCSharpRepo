@@ -73,6 +73,9 @@ namespace ConsumerPoints.Migrations
                     b.Property<int>("Points")
                         .HasColumnType("int");
 
+                    b.Property<int>("PointsSpent")
+                        .HasColumnType("int");
+
                     b.HasKey("Timestamp");
 
                     b.ToTable("Transactions");

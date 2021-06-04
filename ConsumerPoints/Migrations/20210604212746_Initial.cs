@@ -40,7 +40,8 @@ namespace ConsumerPoints.Migrations
                 {
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Payer = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Points = table.Column<int>(type: "int", nullable: false)
+                    Points = table.Column<int>(type: "int", nullable: false),
+                    PointsSpent = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
