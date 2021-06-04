@@ -21,18 +21,9 @@ namespace ConsumerPoints.Data
             base.OnModelCreating(modelBuilder);
             // Seed data - needs migration
 
-            modelBuilder.Entity<SpendingMarker>()
-                .HasData(
-                    new SpendingMarker
-                    {
-                        Id=1,
-                        LastSpentDate=DateTime.MinValue,
-                        LastWasPartiallySpent=false,
-                        Remainder=0
-                    });
+           
         }
 
-        public DbSet<SpendingMarker> SpendingMarkers { get; set; }
         public DbSet<PayerPoints> PayerPoints { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
     }

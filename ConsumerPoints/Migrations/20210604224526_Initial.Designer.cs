@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConsumerPoints.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20210604212746_Initial")]
+    [Migration("20210604224526_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,36 +34,6 @@ namespace ConsumerPoints.Migrations
                     b.ToTable("PayerPoints");
                 });
 
-            modelBuilder.Entity("ConsumerPoints.Models.SpendingMarker", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("LastSpentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("LastWasPartiallySpent")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Remainder")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SpendingMarkers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            LastSpentDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastWasPartiallySpent = false,
-                            Remainder = 0
-                        });
-                });
-
             modelBuilder.Entity("ConsumerPoints.Models.Transaction", b =>
                 {
                     b.Property<DateTime>("Timestamp")
@@ -75,7 +45,7 @@ namespace ConsumerPoints.Migrations
                     b.Property<int>("Points")
                         .HasColumnType("int");
 
-                    b.Property<int>("PointsSpent")
+                    b.Property<int>("UnspentPoints")
                         .HasColumnType("int");
 
                     b.HasKey("Timestamp");
