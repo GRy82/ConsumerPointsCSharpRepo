@@ -76,9 +76,9 @@ namespace ConsumerPoints.ServerLogic
                 payerBalance.Points -= deduction;
                 _context.PayerPoints.Update(payerBalance);
                 _context.Transactions.Update(oldestUnspentTransaction);
+                _context.SaveChanges();
             }
 
-            _context.SaveChanges();
             return pointsSpentByPayer.Values.ToList();
         }
 
@@ -97,9 +97,8 @@ namespace ConsumerPoints.ServerLogic
 
         private Transaction GetOldestUnspentTrans()
         {
-            return _context.Transactions.Select(c => c)
-                                        .Where(c => c.UnspentPoints > 0)
-                                        .OrderBy(c => c.Timestamp).First();
+            return _context.Transactions.Where(u => u.UnspentPoints > 0)
+                .OrderBy(c => c.Timestamp).First();
         }
 
 
