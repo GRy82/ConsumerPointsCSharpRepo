@@ -20,7 +20,7 @@ namespace ConsumerPoints.Models
                 Payer = transaction.Payer,
                 Points = transaction.Points,
                 Timestamp = transaction.Timestamp
-            });
+            };
         }
     }
 
