@@ -30,7 +30,7 @@ namespace ConsumerPoints.Controllers
             try
             {
                 _transactionStorage.AddTransaction(transaction);
-                return Ok(transaction);
+                return Ok(TransactionReturn.TransactionConvert(transaction)) ;
             }
             catch(Exception e)
             {

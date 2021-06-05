@@ -17,6 +17,7 @@ namespace ConsumerPoints.Models
         [Key]
         public DateTime Timestamp { get; set; }
 
+        
         public int UnspentPoints { get; set; }
     }
 }

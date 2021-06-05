@@ -35,6 +35,7 @@ namespace ConsumerPoints.ServerLogic
             if(!ValidTransactionPoints(payer, transaction)) 
                 throw new Exception("Payer balances cannot be negative.");
 
+            transaction.UnspentPoints = transaction.Points;
             _context.Transactions.Add(transaction);
 
             if (payer == null) _context.PayerPoints.Add(
