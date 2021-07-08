@@ -9,10 +9,15 @@ using Newtonsoft.Json;
 
 namespace ConsumerPoints.ServerLogic
 {
+    // In the DbOperations version of this service, a MS SQL Server database is interacted with.
+    // The Db has two tables: Transactions and PayerPoints
+    // When points are spent, points from the least recent transaction are spent first.
+    // Record of transactions remains in the database even after being spent.  
+
     public class DbOperations : ITransactionStorage
     {
         private readonly ApplicationContext _context;
-        const int spendingMarkerId = 1;
+
         public DbOperations(ApplicationContext context)
         {
             _context = context;
@@ -32,19 +37,20 @@ namespace ConsumerPoints.ServerLogic
         public void AddTransaction(Transaction transaction)
         {
             var payer = _context.PayerPoints.Find(transaction.Payer);
+            // Maintains consistency(ACID) within the database.
             if(!ValidTransactionPoints(payer, transaction)) 
                 throw new Exception("Payer balances cannot be negative.");
 
             transaction.UnspentPoints = transaction.Points;
             _context.Transactions.Add(transaction);
 
-            if (payer == null) _context.PayerPoints.Add(
+            if (payer == null) _context.PayerPoints.Add( // If this payer will be new to the database
                  new PayerPoints
                  {
                      Payer=transaction.Payer,
                      Points=transaction.Points
                  });
-            else
+            else  // If this payer is already in the database, just add points.
             {
                 payer.Points += transaction.Points;
                 _context.PayerPoints.Update(payer);
@@ -63,15 +69,20 @@ namespace ConsumerPoints.ServerLogic
             Dictionary<string, PayerPoints> pointsSpentByPayer = new Dictionary<string, PayerPoints>();
             Transaction oldestUnspentTransaction;
 
+            // Continue to consume points, from oldest to more recent transactions until demands of withdrawal are met. 
             while (withdrawal > 0)
             {
+                // Find oldest transaction. Determine deduction from withdrawal, and use it to update... 
+                // ...withdrawal, and unspent points of the given oldest transaction.
                 oldestUnspentTransaction = GetOldestUnspentTrans();
                 int deduction = GetDeduction(oldestUnspentTransaction, withdrawal);
                 withdrawal -= deduction;
                 oldestUnspentTransaction.UnspentPoints -= deduction;
-  
+
+                // This dict collects the information used for the HTTP Response.
                 ServerHelper.InsertToDictionary(pointsSpentByPayer, oldestUnspentTransaction.Payer, deduction * -1);
 
+                //update both db tables based on the changed values in the code block above.
                 var payerBalance = _context.PayerPoints.Find(oldestUnspentTransaction.Payer);
                 payerBalance.Points -= deduction;
                 _context.PayerPoints.Update(payerBalance);
@@ -79,6 +90,7 @@ namespace ConsumerPoints.ServerLogic
                 _context.SaveChanges();
             }
 
+            // Returns list of objects that describes the transactions consumed. 
             return pointsSpentByPayer.Values.ToList();
         }
 
@@ -86,9 +98,10 @@ namespace ConsumerPoints.ServerLogic
         private int GetDeduction(Transaction oldestUnspentTransaction, int withdrawal)
         {
             int deduction = 0;
+            // if the transaction points will be completely consumed
             if (withdrawal > oldestUnspentTransaction.UnspentPoints)
                 deduction = oldestUnspentTransaction.UnspentPoints;
-            else
+            else // if te transaction points will be partially consumed
                 deduction = withdrawal;
 
             return deduction;
@@ -112,6 +125,8 @@ namespace ConsumerPoints.ServerLogic
             return pointsTotal;
         }
 
+        // Helper function helping to enforce ACID database Consistency.
+        // Returns true if transaction passed is valid. False if it would result in negative balance.
         private bool ValidTransactionPoints(PayerPoints payer, Transaction transaction)
         {
             if (payer != null && payer.Points + transaction.Points < 0

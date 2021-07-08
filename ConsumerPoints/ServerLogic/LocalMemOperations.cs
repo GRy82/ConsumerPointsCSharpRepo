@@ -10,33 +10,13 @@ using Newtonsoft.Json;
 
 namespace ConsumerPoints.ServerLogic
 {
+    // In the LocalMemOperations version of this service, a priority queue is built on a min heap and is
+    // used as the underlying data structure.  Transactions are not documented for documentation's sake.
+    // They are only stored, and then used and removed as needed, with the oldest points being spent first.  
     public class LocalMemOperations : ITransactionStorage
     {
 
         public TransactionQueue storedTransactions = new TransactionQueue();
-
-        //public LocalMemOperations()
-        //{
-        //    AddTransaction( new Transaction
-        //    {
-        //        Payer = "CVS Pharmacy",
-        //        Points = 400,
-        //        Timestamp = new DateTime(2021, 02, 04)
-        //    });
-        //    AddTransaction(new Transaction
-        //    {
-        //        Payer = "Wegman's",
-        //        Points = 300,
-        //        Timestamp = new DateTime(2021, 03, 04)
-        //    });
-        //    AddTransaction( new Transaction
-        //    {
-        //        Payer = "CVS Pharmacy",
-        //        Points = 300,
-        //        Timestamp = new DateTime(2021, 04, 04)
-        //    });
-      
-        //}
 
 
         public string GetPayerBalances()
@@ -54,7 +34,7 @@ namespace ConsumerPoints.ServerLogic
             Dictionary<string, PayerPoints> pointBalanceByPayer = new Dictionary<string, PayerPoints>();
             foreach (var transaction in storedTransactions.ToList())
                 ServerHelper.InsertToDictionary(pointBalanceByPayer, transaction.Payer, transaction.Points);
-
+            //Returns a list of objects, each representing a payer, and the total points per payer.
             return pointBalanceByPayer.Values.ToList();
         }
 
@@ -67,23 +47,26 @@ namespace ConsumerPoints.ServerLogic
 
         public List<PayerPoints> SpendPoints(int withdrawal)
         {
-            int totalPoints = GetTotalPoints();
+            // edge case 1: withdrawal attempted is moot. 
             if (withdrawal == 0) return new List<PayerPoints>();
+            //edge case 2: withdrawal exceeds funds.
+            int totalPoints = GetTotalPoints();
             if (withdrawal > totalPoints) throw new Exception("You do not have the funds for that purchase.");
 
             Dictionary<string, PayerPoints> pointsSpentByPayer = new Dictionary<string, PayerPoints>();
             
+            // Proceeds to consume transactions, least recent to most recent, until demands of the withdrawal are met.  
             do
             {
-                Transaction oldestTransaction;
-                oldestTransaction = storedTransactions.Dequeue();
+                Transaction oldestTransaction = storedTransactions.Dequeue();
 
+                // Processes the transaction in the following manner if all points will be consumed.
                 if (ServerHelper.TransactionConsumed(withdrawal, oldestTransaction))
                 {
                     ServerHelper.InsertToDictionary(pointsSpentByPayer, oldestTransaction.Payer, oldestTransaction.Points * -1);
                     withdrawal -= oldestTransaction.Points;
                 }
-                else
+                else // Processes the transaction in the following manner if it will only be partially consumed.
                 {
                     oldestTransaction.Points -= withdrawal;
                     storedTransactions.Enqueue(oldestTransaction);
@@ -92,6 +75,7 @@ namespace ConsumerPoints.ServerLogic
                 }
             } while (withdrawal > 0);
 
+            // Returns list of objects that describes the transactions consumed.  
             return pointsSpentByPayer.Values.ToList();
         }
 

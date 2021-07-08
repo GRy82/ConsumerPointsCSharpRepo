@@ -13,6 +13,10 @@ namespace ConsumerPoints.ServerLogic
             return pointsNeeded > transaction.Points;
         }
 
+
+        // The following two static methods are used in different circumstances depending on the type of the dictionary. 
+        // They each serve the same purpose, but with different logic which corresponds to the dictionary type used.
+
         public static void InsertToDictionary(Dictionary<string, PayerPoints> payerPoints, string Payer, int Points)
         {
             if (payerPoints.ContainsKey(Payer))

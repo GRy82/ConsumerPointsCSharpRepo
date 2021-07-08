@@ -40,6 +40,9 @@ namespace ConsumerPoints
                     .AllowAnyHeader());
             });
 
+            // Choose whether to use local memory or MS SQL server database here!
+            // Uncomment the first line and comment out the second line to use database.
+            // Uncomment the second line and comment out the first line to use local memory.
             services.AddScoped<ITransactionStorage, DbOperations>();
             //services.AddSingleton<ITransactionStorage, LocalMemOperations>();
 
