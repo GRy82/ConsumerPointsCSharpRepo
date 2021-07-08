@@ -76,25 +76,3 @@ To spend points, and create a deduction from the payer balances in the database,
 }
 
 If successful, you will receive a response that specifies what payer/company points were deducted from, and how many from each. Otherwise, an error message will specify what went wrong. 
-
-
-## Development Notes
-According to the instructions for this project, it was not necessary that data be stored in a durable data store. I thought it would be best to provide the user of the service with the option of storing data in memory, or storing data in a database. So to accomplish this in the most simplistic way I could conceive, I created an interface -- ITransactionStorage that could be inherited by any class seeking to facilitate the operations required of this service. The chosen method of storage, and its corresponding class could be implemented by being registered as a scoped service in Startup.cs.  Regardless of which class is used, the PointsController ultimately serves as the route and endpoint for interaction with stored data, with its underlying, encapsulated logic within the LocalMemOperations or DbOperations classes.
-
-### Locally-Hosted Database with MSSQL Server/DbOperations
-The DbOperations class is that which is responsible for providing underlying logic for the main functioning of this service, to carry out the functions: GetPayerBalances, SpendPoints, and AddTransaction. It interacts with three separate tables. 'Transactions' table stores transactions in the exact manner they are "POSTed". A second table, 'PayerPoints' stores each unique payer, and their respective balance. A third table is present as a host to a single object. This object is the 'SpendingMarker'.  It serves as a marker for the date of the last transaction with points spent, whether completely, or incompletely. The table also has a column which stores how many points are leftover/remaining in the last transaction(if it was spent incompletely).  
-
-There were some perceived advantages to this approach. With two separate tables where payers are represented, lookup of balances would be relatively quick. Additionally, it rides a line between space and time-complexity, while staying true to a rigid interpretation of the project instructions. Originally, a time-complexity-efficient approach was implemented where timestamps were primary keys, and transactions were removed as they were used. But this approach was overhauled, as I decided it was probably very important that transactions, spent or not, remain in the database for the accounting record.  
-
-The downside to the approach featured in the project is that the nature of the business logic was not conducive to being clearly expressed. I refer specifically to the "SpendPoints" method. Significant effort was needed to make that code more readable/expressive.  
-
-There would be some other efficient methods to approaching this project with a local database. However, if approaching the projcet with a rigid interpretation of the instructions, it seemed that some of my perceived alternative solutions may be out-of-bounds, so-to-speak. The first inclination of mine was to add columns to the Transaction table, and transitively, add properties to the Transaction class. However, it was clearly specified which properties that class should possess.  
-
-### In-Memory Storage
-If registered as a service, the LocalMemOperations class is that responsible for carrying out interaction with data stored in memory. It uses a TransactionQueue, which is a custom-created data structure resembling a priority queue(implemented using a min-heap). The TransactionQueue data structure was meant to have an added feature of being enumerable, but this was not able to be accomplished successfully. A work-around was achieved to carry out the functions: GetPayerBalances, SpendPoints, and AddTransaction.
-
-This LocalMemOperations class was testable, and passing with unit tests, but did not feature truly persistent data. With each request made to the service, class fields would be re-initialized, and constructors would be re-called. The proposed solution for carrying this service out to full-functioning, would be with the use of a local cache. 
-
-06/03/2021 update: Local cache was not needed to achieve persistence of locally-stored data throughout the lifetime of the application. Service just needed to be registered as Singleton, as opposed to Transient or Scoped -- as it had been registered originally.  A memory cache is still intended to be implemented, but it would better serve the ITransactionStorage DbOperations service.
-
-
